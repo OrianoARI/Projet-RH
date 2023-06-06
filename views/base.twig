@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"> {% block link %}{% endblock %}
+		<link rel="stylesheet" href="/css/style.css">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"> {% block link %}{% endblock %}
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+		{% block head %}
+			<title>Document</title>
+		{% endblock %}
+	</head>
+	<body>
+		{% block header %}
+			{% include "/layouts/_header.twig" %}
+		{% endblock %}
+		{% block main %}
+			{% block form %}{% endblock %}
+
+		{% endblock %}
+		<script src="https://kit.fontawesome.com/790929ea32.js" crossorigin="anonymous"></script>
+		{% block scriptJs %}{% endblock %}
+	</body>
+</html>

@@ -1,0 +1,148 @@
+@font-face {
+    font-family: timelessbold;
+    src: url(../fonts/Timeless-Bold.ttf);
+}
+
+@font-face {
+    font-family: timeless;
+    src: url(../fonts/Timeless.ttf);
+}
+
+
+html {
+    padding: 0%;
+}
+
+body {
+    padding: 0;
+    background-image: url("../img/dashboard-background.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+main {
+    display: flex;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+}
+
+.logo {
+    width: 400px;
+    height: auto;
+}
+
+.card-container {
+    display: flex;
+    justify-content: space-around;
+}
+
+.card {
+    font-family: timelessbold;
+    padding: 10px;
+    width: 15vw;
+    height: auto;
+    border: 3px solid rgba(0, 0, 0, 0.26);
+    border-radius: 20px;
+    background-color: rgba(255, 255, 255, 0.60);
+}
+
+.card img {
+    width: 150px;
+    height: auto;
+    margin: auto;
+}
+
+.photo {
+    text-align: center;
+}
+
+
+input::placeholder {
+    font-style: italic;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+input:focus::placeholder {
+    font-style: normal;
+    font-weight: bold;
+}
+
+
+h1 {
+    text-align: center;
+    margin: 0;
+
+}
+
+h3 {
+    text-align: center;
+    font-family: timeless, arial, 'Times New Roman', Times, serif;
+    font-size: 25px;
+}
+
+h2 {
+    font-size: 50px;
+    text-align: center;
+    font-family: timelessbold, arial, 'Times New Roman', Times, serif;
+}
+
+.dashboard-form {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border-radius: 20px;
+    display: flex;
+    background-color: rgba(255, 255, 255, 0.60);
+}
+
+
+
+
+.dashboard-form form input {
+    border: none;
+    border-radius: 20px;
+    padding: 10px;
+    margin: 10px;
+}
+
+
+.dashboard-form form {
+    display: flex;
+}
+
+input:focus {
+    outline-style: none;
+}
+
+
+.button-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 5px;
+}
+
+button {
+    margin: 5px;
+    width: 100px;
+    padding: 5px;
+    border-radius: 20px;
+}
+
+button:hover {
+    font-weight: bold;
+}
+
+#logoutBtn {
+    margin-left: auto;
+    margin-bottom: auto;
+    margin-top: auto;
+    align-items: center;
+    width: 100px;
+    padding: 5px;
+    border-radius: 20px;
+}

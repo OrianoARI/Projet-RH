@@ -1,0 +1,179 @@
+html {
+    padding: 0%;
+}
+
+body {
+    padding: 0;
+    background-image: url("../img/register-background.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+main {
+    display: flex;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+}
+
+.logo {
+    width: 400px;
+    height: auto;
+}
+
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+
+
+.forms {
+    background-color: rgba(255, 255, 255, 0.60);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border-radius: 10px;
+    padding: 10px;
+    flex: 1;
+}
+
+input::placeholder {
+    font-style: italic;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+input:focus::placeholder {
+    font-style: normal;
+    font-weight: bold;
+}
+
+
+h1 {
+    text-align: center;
+    margin: 0;
+
+}
+
+h3 {
+    text-align: center;
+    font-family: timeless, arial, 'Times New Roman', Times, serif;
+    font-size: 25px;
+}
+
+h2 {
+    margin: 60px;
+    font-size: 50px;
+    text-align: center;
+    font-family: timelessbold, arial, 'Times New Roman', Times, serif;
+}
+
+.subscribe {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border-radius: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(247, 148, 33, 0.70);
+    width: 66%;
+}
+
+.sub-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 60%;
+}
+
+.sub-form input {
+    border: none;
+    border-radius: 20px;
+    padding: 10px;
+    margin: 10px;
+    width: 100%;
+}
+
+.login {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 66%;
+    background-color: rgba(41, 170, 225, 0.70);
+}
+
+.log-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.log-form input {
+    border: none;
+}
+
+i {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+
+input:focus {
+    outline-style: none;
+}
+
+.email {
+    background-color: white;
+    border-radius: 20px;
+    padding: 10px;
+    margin: 10px;
+}
+
+
+
+.password {
+    background-color: white;
+    border-radius: 20px;
+    padding: 10px;
+    margin: 10px;
+}
+
+
+
+.us {
+    flex: 1;
+}
+
+.button-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 5px;
+}
+
+button {
+    margin: 5px;
+    width: 100px;
+    padding: 5px;
+    border-radius: 20px;
+}
+
+button:hover {
+    font-weight: bold;
+}
+
