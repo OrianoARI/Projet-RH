@@ -15,11 +15,18 @@
 		{% block header %}
 			{% include "/layouts/_header.twig" %}
 		{% endblock %}
-		{% block main %}
-			{% block form %}{% endblock %}
+		<main>
+			{% block main %}
+				{% block form %}{% endblock %}
+				{% block datas %}{% endblock %}
 
-		{% endblock %}
+			{% endblock %}
+			{% block overlay %}{% endblock %}
+		</main>
+		{% block footer %}
+		{% include "/layouts/_footer.twig" %}{% endblock %}
 		<script src="https://kit.fontawesome.com/790929ea32.js" crossorigin="anonymous"></script>
 		{% block scriptJs %}{% endblock %}
+
 	</body>
 </html>

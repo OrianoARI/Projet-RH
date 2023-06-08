@@ -1,27 +1,29 @@
 {% extends "base.twig" %}
 
 {% block main %}
-
-	{% if employees %}
-		<p>ok</p>
-	{% else %}
-		<p>Vous pouvez ajouter des employés en cliquant ici</p>
-	{% endif %}
 	{% block form %}
-		<h2>Tableau de bord</h2>
-		<div class="dashboard-form">
-			<form action="/addEmployee" method="post" enctype="multipart/form-data">
-				<input type="text" name="name" id="employeeName" placeholder="Nom de l'employé">
-				<input type="text" name="function" id="employeeFunction" placeholder="Fonction">
-				<input type="number" name="blame" id="employeeBlame" placeholder="Nombre de blâme">
-				<input type="file" name="photo" id="employeePhoto">
-				<div class="button-bar">
-					<button class="btn" type="submit" id="addBtn">Ajouter</button>
-					<button class="btn" type="reset">Effacer</button>
-				</div>
-			</form>
-			<button class="btn" id="logoutBtn" type="button" onclick="window.location.href='/logout'">Déconnexion</button>
+		<div class="fixed">
+			<h2>Tableau de bord de la société
+				{% if enterprise.enterpriseId %}
+					{{enterprise.enterpriseName}}
+				{% endif %}
+			</h2>
+			<div class="dashboard-form">
+				<form action="/addEmployee" method="post" enctype="multipart/form-data">
+					<input type="text" name="name" id="employeeName" placeholder="Nom de l'employé">
+					<input type="text" name="function" id="employeeFunction" placeholder="Fonction">
+					<input type="number" name="blame" id="employeeBlame" placeholder="Nombre de blâme">
+					<input type="file" name="photo" id="employeePhoto">
+					<div class="button-bar">
+						<button class="btn" type="submit" id="addBtn">Ajouter</button>
+						<button class="btn" type="reset">Effacer</button>
+					</div>
+				</form>
+				<button class="btn" id="logoutBtn" type="button" onclick="window.location.href='/logout'">Déconnexion</button>
+			</div>
 		</div>
+	{% endblock %}
+	{% block datas %}
 		<div class="card-container">
 			{% if employees %}
 				{% for employee in employees %}
@@ -36,18 +38,39 @@
 							<img src="/uploads/{{employee.photo}}">
 						</div>
 						<div class="button-bar">
-							<button
-								id="update" type="button">{# <a href="updateProject/{{project.id}}">Update</a> #}
+							<button class="open-modal" type="button" onclick='openModal(this)' data-employee={{employee | json_encode() | escape}} data-employeeid={{employee.id}}>Update</button>
+							<button id="delete" type="button">
+								<a href="deleteEmployee/{{employee.id}}">Supprimer</a>
 							</button>
-							<button
-								id="delete" type="button"><a href="deleteEmployee/{{employee.id}}">Supprimer</a>
+							<button class="btn" type="button">
+								<a href="blameEmployee/{{employee.id}}">Blâmer</a>
 							</button>
 						</div>
 					</div>
 				{% endfor %}
+			{% else %}
+				<p class="empty">Vous n'avez pas encore d'employé. Vous pouvez ajouter votre premier employé en complétant le formulaire ci-dessus.</p>
 			{% endif %}
 		</div>
+		<div class="update-modal hidden">
+			<form id="action" method="post" enctype="multipart/form-data">
+				<input type="text" name="name" id="modalName" placeholder="Nom de l'employé">
+				<input type="text" name="function" id="modalFunction" placeholder="Fonction">
+				<input type="number" name="blame" id="modalBlame" placeholder="Nombre de blâme">
+				<input type="file" name="photo" id="modalPhoto">
+				<div class="button-bar">
+					<button class="btn" type="submit" id="updateBtn">Enregistrer</button>
+					<button id="closeModal" class="btn" type="button">Annuler</button>
+				</div>
+			</form>
+		</div>
+
+
 	{% endblock %}
-
-
+{% endblock %}
+{% block overlay %}
+	<div class="filter overlay"></div>
+{% endblock %}
+{% block scriptJs %}
+	<script src="/js/dashboard.js"></script>
 {% endblock %}

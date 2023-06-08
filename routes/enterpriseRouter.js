@@ -5,6 +5,7 @@ const employeeModel = require('../models/employeeModel');
 const authguard = require('../services/authguard');
 const upload = require('../services/multer');
 const fs = require('fs');
+const { log } = require('console');
 
 
 //afficher la page d'inscription
@@ -40,6 +41,7 @@ enterpriseRouter.post('/login', async (req, res) => {
         if (enterprise) {
             let match = await bcrypt.compare(req.body.password, enterprise.password);
             req.session.enterpriseId = enterprise._id;
+            req.session.enterpriseName = enterprise.name;
             if (match) {
                 res.redirect("/dashboard");
             } else {
@@ -112,6 +114,66 @@ enterpriseRouter.get('/deleteEmployee/:id', async (req, res) => {
         res.send(error);
     }
 });
+
+
+//récupération d'un employé pour l'afficher dans la modale update
+
+enterpriseRouter.get('/updateEmployee/:id', async (req, res) => {
+    try {
+        let employee = await employeeModel.findOne({ _id: req.params.id })
+        res.render("pages/dashboard.twig", {
+            employee: employee
+        });
+        console.log('oups');
+    } catch (error) {
+
+        res.send(error);
+    }
+});
+
+
+enterpriseRouter.get('/blameEmployee/:id', async (req, res) => {
+    try {
+        let employeeToblame = await employeeModel.findOne({ _id: req.params.id });
+        let blame = employeeToblame.blame;
+        console.log(blame);
+        blame++;
+        req.body.blame = blame;
+        console.log(blame);
+        let employee = await employeeModel.updateOne({ _id: req.params.id }, req.body);
+        req.body.blame = blame;
+        console.log(req.params.id);
+        if (req.body.blame >= 3) {
+            let employeeId = req.params.id
+            return res.redirect(`/deleteEmployee/${employeeId}`)
+        }
+        res.redirect('/dashboard'); // code: 'ERR_HTTP_HEADERS_SENT' => si res.redirect pas dans else ou si pas de return, affiche cette erreur car il envoie deux reponses en même temps
+
+    } catch (error) {
+        console.log('error');
+        res.send(error);
+    }
+});
+
+enterpriseRouter.post('/updateEmployee/:id', upload.single('photo'), async (req, res) => {
+    try {
+        if (req.file) {
+            let delPhoto = await employeeModel.findOne({ _id: req.params.id });
+            let photoPath = `./assets/uploads/${delPhoto.photo}`;
+            if (fs.existsSync(photoPath)) {
+                fs.unlinkSync(photoPath);
+            }
+            req.body.photo = req.file.filename;
+        }
+        let employee = await employeeModel.updateOne({ _id: req.params.id }, req.body);
+        res.redirect('/dashboard');
+    } catch (error) {
+        console.log('error');
+        res.send(error);
+    }
+});
+
+
 
 
 //route de déconnection

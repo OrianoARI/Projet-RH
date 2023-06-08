@@ -14,6 +14,8 @@ html {
 }
 
 body {
+    position: relative;
+    margin: 0%;
     padding: 0;
     background-image: url("../img/dashboard-background.jpg");
     background-size: cover;
@@ -24,26 +26,21 @@ body {
     justify-content: space-between;
 }
 
-main {
-    display: flex;
-    align-items: center;
-    padding: 0;
-    margin: 0;
-}
-
 .logo {
     width: 400px;
     height: auto;
 }
 
+
 .card-container {
     display: flex;
-    justify-content: space-around;
+    flex-wrap: wrap;
 }
 
 .card {
     font-family: timelessbold;
     padding: 10px;
+    margin: 10px;
     width: 15vw;
     height: auto;
     border: 3px solid rgba(0, 0, 0, 0.26);
@@ -91,18 +88,27 @@ h2 {
     font-family: timelessbold, arial, 'Times New Roman', Times, serif;
 }
 
+.empty {
+    font-size: 20px;
+    border-radius: 20px;
+    font-family: timelessbold, arial, 'Times New Roman', Times, serif;
+    background-color: rgba(255, 255, 255, 0.60);
+    padding: 20px;
+}
+
 .dashboard-form {
     margin-top: 20px;
     margin-bottom: 20px;
     border-radius: 20px;
     display: flex;
-    background-color: rgba(255, 255, 255, 0.60);
+    background-color: rgba(0, 0, 0, 0.300);
 }
 
 
 
 
-.dashboard-form form input {
+.dashboard-form form input,
+.update-modal form input {
     border: none;
     border-radius: 20px;
     padding: 10px;
@@ -145,4 +151,81 @@ button:hover {
     width: 100px;
     padding: 5px;
     border-radius: 20px;
+}
+
+button a {
+    text-decoration: none;
+    color: black;
+}
+
+.update-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: auto;
+    display: flex;
+    padding: 10px;
+    height: auto;
+    border: 3px solid rgba(0, 0, 0, 0.26);
+    border-radius: 20px;
+    background-color: rgba(0, 0, 0, 0.658);
+    z-index: 2;
+}
+
+.update-modal form {
+    display: flex;
+    flex-direction: column;
+}
+
+.hidden {
+    display: none;
+}
+
+.filter {
+    display: none;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.60);
+    z-index: 1;
+}
+
+/* Footer------------------------------------------------------------------------ */
+
+footer {
+    text-align: center;
+    font-weight: bold;
+    font-family: timeless, 'Times New Roman', Times, serif;
+}
+
+.separator {
+    border-left: 1px solid black; /* Définissez la couleur et l'épaisseur du trait selon vos préférences */
+    height: 15px; /* Définissez la hauteur du trait selon vos préférences */
+    margin: 0 10px; /* Ajoutez une marge horizontale pour l'espace autour du trait */
+  }
+
+
+/* ----------------------------------------------------------------------------------- */
+@media (max-width: 1270px) {
+    .dashboard-form {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin: auto;
+    }
+
+    .dashboard-form form {
+        flex-direction: column;
+    }
+
+    #logoutBtn {
+        margin: auto;
+    }
+
+
 }
