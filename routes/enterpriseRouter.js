@@ -63,17 +63,40 @@ enterpriseRouter.post('/login', async (req, res) => {
 //récupérer tous les employés pour les afficher sur la page dashboard
 enterpriseRouter.get('/dashboard', authguard, async (req, res) => {
     try {
+        let name = req.query.name;
+        let employeeFunction = req.query.function;
         let enterpriseId = req.session.enterpriseId;
-        console.log(enterpriseId);
-        let employee = await employeeModel.find({ enterpriseId: enterpriseId })
+        if (name) {
+            let employees = await employeeModel.find({ name: name, enterpriseId: enterpriseId});
 
         res.render("pages/dashboard.twig", {
-            employees: employee,
+            employees: employees
         });
+        } else if (employeeFunction){
+
+            let employees = await employeeModel.find({ "function": employeeFunction, enterpriseId: enterpriseId});
+
+            res.render("pages/dashboard.twig", {
+                employees: employees
+            });
+            
+        } else {
+            let enterpriseId = req.session.enterpriseId;
+            console.log(enterpriseId);
+            let employee = await employeeModel.find({ enterpriseId: enterpriseId })
+            res.render("pages/dashboard.twig", {
+                employees: employee
+            });
+        }
     } catch (error) {
         res.send(error);
     }
 });
+
+
+//récupérer l'employer recherché pour l'afficher sur le dashboard
+
+
 
 //créer un employé
 
@@ -147,7 +170,7 @@ enterpriseRouter.get('/blameEmployee/:id', async (req, res) => {
             let employeeId = req.params.id
             return res.redirect(`/deleteEmployee/${employeeId}`)
         }
-        res.redirect('/dashboard'); // code: 'ERR_HTTP_HEADERS_SENT' => si res.redirect pas dans else ou si pas de return, affiche cette erreur car il envoie deux reponses en même temps
+        res.redirect("/dashboard"); // code: 'ERR_HTTP_HEADERS_SENT' => si res.redirect pas dans else ou si pas de return, affiche cette erreur car il envoie deux reponses en même temps
 
     } catch (error) {
         console.log('error');

@@ -2,25 +2,52 @@
 
 {% block main %}
 	{% block form %}
-		<div class="fixed">
-			<h2>Tableau de bord de la société
-				{% if enterprise.enterpriseId %}
-					{{enterprise.enterpriseName}}
-				{% endif %}
-			</h2>
-			<div class="dashboard-form">
-				<form action="/addEmployee" method="post" enctype="multipart/form-data">
-					<input type="text" name="name" id="employeeName" placeholder="Nom de l'employé">
-					<input type="text" name="function" id="employeeFunction" placeholder="Fonction">
-					<input type="number" name="blame" id="employeeBlame" placeholder="Nombre de blâme">
-					<input type="file" name="photo" id="employeePhoto">
-					<div class="button-bar">
-						<button class="btn" type="submit" id="addBtn">Ajouter</button>
-						<button class="btn" type="reset">Effacer</button>
-					</div>
-				</form>
-				<button class="btn" id="logoutBtn" type="button" onclick="window.location.href='/logout'">Déconnexion</button>
-			</div>
+		<h2>Tableau de bord de la société
+			{% if enterprise.enterpriseId %}
+				{{enterprise.enterpriseName}}
+			{% endif %}
+		</h2>
+		<div class="dashboard-form">
+			<form action="/addEmployee" method="post" enctype="multipart/form-data">
+				<input type="text" name="name" id="employeeName" placeholder="Nom de l'employé">
+				<select name="function" id="employeeFunction">
+					<option value="0">Fonction</option>
+					<option value="directeur adjoint">directeur adjoint</option>
+					<option value="développeur">développeur</option>
+					<option value="secrétaire">secrétaire</option>
+					<option value="comptable">comptable</option>
+					<option value="drh">drh</option>
+				</select>
+				<input type="number" name="blame" id="employeeBlame" placeholder="Nombre de blâme">
+				<input type="file" name="photo" id="employeePhoto">
+				<div class="button-bar">
+					<button class="btn" type="submit" id="addBtn">Ajouter</button>
+					<button class="btn" type="reset">Effacer</button>
+				</div>
+			</form>
+			<button class="btn" id="logoutBtn" type="button" onclick="window.location.href='/logout'">Déconnexion</button>
+		</div>
+		<div class="dashboard-form search-bar">
+			<form action="/dashboard/" method="get">
+				<select name="function" id="function">
+					<option value="0">Filtrer par fonction</option>
+					{% if employees %}
+						{% for employee in employees %}
+							<option value="{{employee.function}}">{{employee.function}}</option>
+						{% endfor %}
+					{% endif %}
+				</select>
+				<button type="submit">Filtrer</button>
+			</form>
+			<form action="/dashboard/" method="get">
+				<input name="name" type="text" placeholder="Rechercher par nom">
+				<button type="submit">Rechercher</button>
+			</form>
+			<button>
+				<a href="/dashboard">Réinitialiser</a>
+			</button>
+
+
 		</div>
 	{% endblock %}
 	{% block datas %}
