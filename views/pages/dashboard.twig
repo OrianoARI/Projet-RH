@@ -12,12 +12,12 @@
 				<input type="text" name="name" id="employeeName" placeholder="Nom de l'employé">
 				<select name="function" id="employeeFunction">
 					<option value="0">Fonction</option>
-					<option value="directeur adjoint">directeur adjoint</option>
-					<option value="développeur">développeur</option>
-					<option value="secrétaire">secrétaire</option>
-					<option value="comptable">comptable</option>
-					<option value="drh">drh</option>
-				</select>
+							{% if employeeFunctions %}
+								{% for employeeFunctions in employeeFunctions %}
+									<option value="{{employeeFunctions.name}}">{{employeeFunctions.name}}</option>
+								{% endfor %}
+							{% endif %}
+						</select>
 				<input type="number" name="blame" id="employeeBlame" placeholder="Nombre de blâme">
 				<input type="file" name="photo" id="employeePhoto">
 				<div class="button-bar">
@@ -25,29 +25,41 @@
 					<button class="btn" type="reset">Effacer</button>
 				</div>
 			</form>
+            <form action="/addFunction" method="post">
+            <input type="text" name="name" id="newFunction" placeholder="Saisir la nouvelle fonction">
+            <button type="submit">Ajouter</button>
+            </form>
 			<button class="btn" id="logoutBtn" type="button" onclick="window.location.href='/logout'">Déconnexion</button>
 		</div>
-		<div class="dashboard-form search-bar">
-			<form action="/dashboard/" method="get">
-				<select name="function" id="function">
-					<option value="0">Filtrer par fonction</option>
-					{% if employees %}
-						{% for employee in employees %}
-							<option value="{{employee.function}}">{{employee.function}}</option>
-						{% endfor %}
-					{% endif %}
-				</select>
-				<button type="submit">Filtrer</button>
-			</form>
-			<form action="/dashboard/" method="get">
-				<input name="name" type="text" placeholder="Rechercher par nom">
-				<button type="submit">Rechercher</button>
-			</form>
-			<button>
-				<a href="/dashboard">Réinitialiser</a>
+		<div class="container">
+			<div class=" search-container">
+				<div class="dashboard-form search-bar">
+					<form action="/dashboard/" method="get" class="search-bar">
+						<select class="invisible" name="function" id="function">
+							<option value="0">Filtrer par fonction</option>
+							{% if employees %}
+								{% for employeeFunctions in employeeFunctions %}
+									<option value="{{employeeFunctions.name}}">{{employeeFunctions.name}}</option>
+								{% endfor %}
+							{% endif %}
+						</select>
+						<button class="invisible" type="submit">Filtrer</button>
+					</form>
+					<form action="/dashboard/" method="get" class="search-bar">
+						<input class="invisible" name="name" type="text" placeholder="Rechercher par nom">
+						<button class="invisible" type="submit">Rechercher</button>
+					</form>
+					<button class="invisible">
+						<a class="invisible" href="/dashboard">Réinitialiser</a>
+					</button>
+				</div>
+			</div>
+			<button class="search-bar-btn open-btn" type"button">
+				<i class="fa-solid fa-circle-chevron-left fa-flip fa-2xl" style="color: #f79421;"></i>
 			</button>
-
-
+			<button class="search-bar-btn close-btn invisible" type"button">
+				<i class="fa-solid fa-circle-chevron-left fa-flip fa-2xl" style="color: #f79421;"></i>
+			</button>
 		</div>
 	{% endblock %}
 	{% block datas %}

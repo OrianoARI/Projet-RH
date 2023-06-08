@@ -7,32 +7,36 @@
 	<main>
 		<div class="forms">
 			<h1><img class="logo" src="img/logo.png" alt="easy management" =""></h1>
-			<section class="subscribe">
-				<h3>Créer un compte entreprise</h3>
-				<form class="sub-form" action="/subscribe" method="post">
-					<input type="text" name="name" id="firmName" placeholder="Nom de l'entreprise">
-					<input type="number" name="siret" id="siret" placeholder="SIRET (14 chiffres sanss espace ni tiret)">
-					<input type="email" name="mail" id="subMail" placeholder="Adresse mail de l'entreprise">
-					<input type="text" name="ceoName" id="ceoName" placeholder="Nom du directeur">
-					<input type="password" name="password" id="subPassword" placeholder="mot de passe">
-					<div class="button-bar">
-						<button type="submit">Créer</button>
-						<button type="reset">Effacer</button>
-					</div>
-				</form>
-			</section>
-			<section class="login">
-				<h3>Vous avez déjà un compte</h3>
-				<form class="log-form" action="/login" method="post">
-					<div class="email">
-						<i class="fa-solid fa-envelope" style="color: #f79421;"></i><input type="email" name="mail" id="mail" placeholder="Adresse mail de l'entreprise"></div>
-					<div class="password">
-						<i class="fa-solid fa-lock" style="color: #f79421;"></i><input type="password" name="password" id="password" placeholder="Votre mot de passe"></div>
-					<div class="button-bar">
-						<button type="submit">Connexion</button>
-					</div>
-				</form>
-			</section>
+			<div class="form-container">
+				<section class="subscribe">
+					<h3>Créer un compte entreprise</h3>
+					<form class="sub-form" action="/subscribe" method="post">
+						<input type="text" name="name" id="firmName" placeholder="Nom de l'entreprise">
+						<input type="number" name="siret" id="siret" placeholder="SIRET (14 chiffres sanss espace ni tiret)">
+						<input type="email" name="mail" id="subMail" placeholder="Adresse mail de l'entreprise">
+						<input type="text" name="ceoName" id="ceoName" placeholder="Nom du directeur">
+						<input type="password" name="password" id="subPassword" placeholder="mot de passe">
+						<div class="button-bar">
+							<button type="submit">Créer</button>
+							<button type="reset">Effacer</button>
+						</div>
+					</form>
+				</section>
+				<section class="login">
+					<h3>Vous avez déjà un compte</h3>
+					{% if enterpriseError %}<p>{{enterpriseError.noEnterpriseError}}</p>{% endif %}
+					<form class="log-form" action="/login" method="post">
+						<div class="email">
+							<i class="fa-solid fa-envelope" style="color: #f79421;"></i><input type="email" name="mail" id="mail" placeholder="Adresse mail de l'entreprise"></div>
+						<div class="password">
+							<i class="fa-solid fa-lock" style="color: #f79421;"></i><input type="password" name="password" id="password" placeholder="Votre mot de passe"></div>
+							{% if enterpriseError %}<p>{{enterpriseError.loginError}}</p>{% endif %}
+						<div class="button-bar">
+							<button type="submit">Connexion</button>
+						</div>
+					</form>
+				</section>
+			</div>
 		</div>
 		<div class="us">
 			<h2>Easy Management est la solution adaptée à la gestion RH de votre entreprise. Plus de 3000 sociétés utilisent notre application, pourquoi pas la vôtre?</h2>

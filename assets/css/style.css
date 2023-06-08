@@ -19,7 +19,6 @@ body {
     padding: 0;
     background-image: url("../img/dashboard-background.jpg");
     background-size: cover;
-    background-repeat: no-repeat;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -90,6 +89,7 @@ h2 {
 }
 
 .empty {
+    height: 40px;
     font-size: 20px;
     border-radius: 20px;
     font-family: timelessbold, arial, 'Times New Roman', Times, serif;
@@ -105,17 +105,47 @@ h2 {
     background-color: rgba(0, 0, 0, 0.300);
 }
 
-.italic {
-    font-style: italic;
+/* Search bar--------------------------------------------------------------------------------- */
+
+.container {
+    display: flex;
+    align-items: center;
+}
+
+.container i {
+    margin: 5px;
+}
+
+.search-bar-btn {
+    border: none;
+    background-color: transparent;
+    width: auto;
 }
 
 
+.search-bar {
+    width: 0;
+}
+
+.invisible {
+    display: none;
+}
+
+
+/* ----------------------------------------------------------------------------------------------- */
+
 .dashboard-form form input,
-.update-modal form input, select {
+.update-modal form input,
+select {
     border: none;
     border-radius: 20px;
     padding: 10px;
     margin: 10px;
+    width: 200px;
+}
+
+select {
+    width: 220px;
 }
 
 
@@ -146,7 +176,8 @@ button:hover {
     font-weight: bold;
 }
 
-#logoutBtn, .search-bar button {
+#logoutBtn,
+.search-bar button {
     margin-left: auto;
     margin-bottom: auto;
     margin-top: auto;
@@ -201,16 +232,20 @@ button a {
 /* Footer------------------------------------------------------------------------ */
 
 footer {
+
     text-align: center;
     font-weight: bold;
     font-family: timeless, 'Times New Roman', Times, serif;
 }
 
 .separator {
-    border-left: 1px solid black; /* Définissez la couleur et l'épaisseur du trait selon vos préférences */
-    height: 15px; /* Définissez la hauteur du trait selon vos préférences */
-    margin: 0 10px; /* Ajoutez une marge horizontale pour l'espace autour du trait */
-  }
+    border-left: 1px solid black;
+    /* Définissez la couleur et l'épaisseur du trait selon vos préférences */
+    height: 15px;
+    /* Définissez la hauteur du trait selon vos préférences */
+    margin: 0 10px;
+    /* Ajoutez une marge horizontale pour l'espace autour du trait */
+}
 
 
 /* ----------------------------------------------------------------------------------- */
@@ -219,16 +254,88 @@ footer {
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        margin: auto;
+        margin-left: 30%;
+        margin-right: 30%;
+    }
+
+    .dashboard-form .search-bar {
+        flex-direction: row;
+        padding: 10px;
+    }
+
+    .search-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin-left: 30%;
+        margin-right: 30%;
+        text-align: center;
+    }
+
+    .search-bar {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .search-container button {
+        margin: 10px;
     }
 
     .dashboard-form form {
         flex-direction: column;
+        justify-content: center;
+        align-items: center;
     }
 
     #logoutBtn {
+        margin: 10px;
+
+    }
+
+    .invisible input,
+    .invisible select {
+        margin: auto;
+    }
+
+    .invisible button {
+        margin: auto;
+    }
+
+    .container {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .container i {
+        rotate: 90deg;
+    }
+
+    .card {
+        align-items: center;
+        width: 30vw;
+    }
+
+
+    .button-bar {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 625px) {
+    .card img {
+        width: 80px;
+        height: auto;
         margin: auto;
     }
 
 
+    .dashboard-form {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin-left: 10%;
+        margin-right: 10%;
+    }
+    
 }

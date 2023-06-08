@@ -2,10 +2,12 @@ const bcrypt = require('bcrypt');
 const enterpriseRouter = require('express').Router();
 const enterpriseModel = require('../models/enterpriseModel');
 const employeeModel = require('../models/employeeModel');
+const functionModel = require('../models/functionModel');
 const authguard = require('../services/authguard');
 const upload = require('../services/multer');
 const fs = require('fs');
 const { log } = require('console');
+
 
 
 //afficher la page d'inscription
@@ -15,6 +17,7 @@ enterpriseRouter.get('/', async (req, res) => {
         res.render('pages/registration.twig');
     } catch (error) {
         res.send(error);
+        response.status(404);
     }
 });
 
@@ -29,6 +32,7 @@ enterpriseRouter.post('/subscribe', async (req, res) => {
         await enterprise.save();
         res.redirect('/');
     } catch (error) {
+        res.status(400).send("Erreur de validation des données")
         res.send(error);
     }
 });
@@ -45,47 +49,72 @@ enterpriseRouter.post('/login', async (req, res) => {
             if (match) {
                 res.redirect("/dashboard");
             } else {
-                res.status(400);
-                res.redirect("/");
+                let loginError = "Erreur de mot de passe"
+                res.status(400).render("pages/registration.twig", {
+                    enterpriseError : {loginError}
+                });
             }
         } else {
-            res.status(400);
-            res.redirect("/");
+            let noEnterpriseError = "Ce mail n'est associé à aucune entreprise";
+            res.status(400).render("pages/registration.twig", {
+                enterpriseError : {noEnterpriseError}
+            });
         }
     } catch (error) {
-        console.log("boloss");
         res.send(error);
     }
 });
 
 
+//créer une nouvelle fonction
 
-//récupérer tous les employés pour les afficher sur la page dashboard
+enterpriseRouter.post('/addFunction', authguard, async (req, res) => {
+    try {
+        req.body.enterpriseId = req.session.enterpriseId;
+        let newFunction = new functionModel(req.body);// création d'une nouvelle fonction via remplissage de l'input nouvelle fonction
+        await newFunction.save();
+        res.redirect('/dashboard');
+    } catch (error) {
+        res.status(400).send("Erreur de validation des données")
+        res.send(error);
+    }
+});
+
+
+//rechercher les employés pour les afficher sur la page dashboard
 enterpriseRouter.get('/dashboard', authguard, async (req, res) => {
     try {
         let name = req.query.name;
         let employeeFunction = req.query.function;
         let enterpriseId = req.session.enterpriseId;
         if (name) {
-            let employees = await employeeModel.find({ name: name, enterpriseId: enterpriseId});
-
-        res.render("pages/dashboard.twig", {
-            employees: employees
-        });
-        } else if (employeeFunction){
-
-            let employees = await employeeModel.find({ "function": employeeFunction, enterpriseId: enterpriseId});
+            const searchTerm = name.toLowerCase();
+            let employeeFunctions = await functionModel.find({ enterpriseId: enterpriseId });
+            let employees = await employeeModel.find({ enterpriseId: enterpriseId });
+            // Filtrer les employés dont le nom correspond au terme de recherche insensible à la casse
+            employees = employees.filter(employee => employee.name.toLowerCase() === searchTerm);
 
             res.render("pages/dashboard.twig", {
-                employees: employees
+                employees: employees,
+                employeeFunctions: employeeFunctions
+
             });
-            
+        } else if (employeeFunction) {
+
+            let employees = await employeeModel.find({ "function": employeeFunction, enterpriseId: enterpriseId });
+            let employeeFunctions = await functionModel.find({ enterpriseId: enterpriseId });
+            res.render("pages/dashboard.twig", {
+                employees: employees,
+                employeeFunctions: employeeFunctions
+            });
+
         } else {
             let enterpriseId = req.session.enterpriseId;
-            console.log(enterpriseId);
             let employee = await employeeModel.find({ enterpriseId: enterpriseId })
+            let employeeFunctions = await functionModel.find({ enterpriseId: enterpriseId });
             res.render("pages/dashboard.twig", {
-                employees: employee
+                employees: employee,
+                employeeFunctions: employeeFunctions
             });
         }
     } catch (error) {
@@ -94,18 +123,14 @@ enterpriseRouter.get('/dashboard', authguard, async (req, res) => {
 });
 
 
-//récupérer l'employer recherché pour l'afficher sur le dashboard
-
-
-
 //créer un employé
 
-enterpriseRouter.post('/addEmployee', upload.single("photo"), async (req, res) => {
+enterpriseRouter.post('/addEmployee', authguard, upload.single("photo"), async (req, res) => {
     try {
         if (req.file.filename) {
             req.body.photo = req.file.filename;
-            console.log(req.body.photo);
         }
+
         req.body.enterpriseId = req.session.enterpriseId;
         let employee = new employeeModel(req.body);
         await employee.save();
@@ -118,7 +143,7 @@ enterpriseRouter.post('/addEmployee', upload.single("photo"), async (req, res) =
 
 //supprimer un employé
 
-enterpriseRouter.get('/deleteEmployee/:id', async (req, res) => {
+enterpriseRouter.get('/deleteEmployee/:id', authguard, async (req, res) => {
     try {
         let employee = await employeeModel.findOne({ _id: req.params.id });
         if (employee.photo) {
@@ -126,14 +151,12 @@ enterpriseRouter.get('/deleteEmployee/:id', async (req, res) => {
             if (fs.existsSync(imagePath)) {
                 fs.unlinkSync(imagePath);
             } else {
-                console.log('merde');
                 throw error;
             }
         }
         await employeeModel.deleteOne({ _id: req.params.id });
         res.redirect("/dashboard");
     } catch (error) {
-        console.log('remerde');
         res.send(error);
     }
 });
@@ -141,31 +164,28 @@ enterpriseRouter.get('/deleteEmployee/:id', async (req, res) => {
 
 //récupération d'un employé pour l'afficher dans la modale update
 
-enterpriseRouter.get('/updateEmployee/:id', async (req, res) => {
+enterpriseRouter.get('/updateEmployee/:id', authguard, async (req, res) => {
     try {
         let employee = await employeeModel.findOne({ _id: req.params.id })
         res.render("pages/dashboard.twig", {
             employee: employee
         });
-        console.log('oups');
     } catch (error) {
 
         res.send(error);
     }
 });
 
+//blâmer un employé
 
-enterpriseRouter.get('/blameEmployee/:id', async (req, res) => {
+enterpriseRouter.get('/blameEmployee/:id', authguard, async (req, res) => {
     try {
         let employeeToblame = await employeeModel.findOne({ _id: req.params.id });
         let blame = employeeToblame.blame;
-        console.log(blame);
         blame++;
         req.body.blame = blame;
-        console.log(blame);
         let employee = await employeeModel.updateOne({ _id: req.params.id }, req.body);
         req.body.blame = blame;
-        console.log(req.params.id);
         if (req.body.blame >= 3) {
             let employeeId = req.params.id
             return res.redirect(`/deleteEmployee/${employeeId}`)
@@ -178,7 +198,9 @@ enterpriseRouter.get('/blameEmployee/:id', async (req, res) => {
     }
 });
 
-enterpriseRouter.post('/updateEmployee/:id', upload.single('photo'), async (req, res) => {
+//Modifier un employé
+
+enterpriseRouter.post('/updateEmployee/:id',authguard, upload.single('photo'), async (req, res) => {
     try {
         if (req.file) {
             let delPhoto = await employeeModel.findOne({ _id: req.params.id });
@@ -201,7 +223,7 @@ enterpriseRouter.post('/updateEmployee/:id', upload.single('photo'), async (req,
 
 //route de déconnection
 
-enterpriseRouter.get('/logout', (req, res) => {
+enterpriseRouter.get('/logout', authguard, (req, res) => {
     // Détruire la session
     req.session.destroy((err) => {
         if (err) {

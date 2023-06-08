@@ -3,12 +3,12 @@ const mongoose = require('mongoose');
 const enterpriseSchema = new mongoose.Schema({
     name: {
         type: String,
-        // required: [true, "Nom d'entreprise requis"],
-        // validate: {
-        //     validator: function (value) {
-        //         return /^[a-zA-Z0-9\- 'À-ÖØ-öø-ÿ]+$/u.test(value);
-        //     }
-        // }
+        required: [true, "Nom d'entreprise requis"],
+        validate: {
+            validator: function (value) {
+                return /^[a-zA-Z0-9\- 'À-ÖØ-öø-ÿ]+$/u.test(value);
+            }
+        }
     },
     siret: {
         type: String,

@@ -32,4 +32,41 @@ function closeModal() {
     document.documentElement.style.overflow = 'visible';
 };
 
+let search = document.querySelectorAll('.search-bar');
+let invisible = document.querySelectorAll('.invisible');
+let openBtn = document.querySelector('.open-btn');
+let closeBtn = document.querySelector('.close-btn');
 
+openBtn.addEventListener('click', () => {
+    openSearchBar();
+});
+
+function openSearchBar() {
+
+    search.forEach(element => {
+        element.style.transition = "100ms"
+        element.style.width = "800px";
+    });
+    invisible.forEach(element => {
+        element.style.display = "block"
+    });
+    openBtn.style.display = "none";
+}
+
+closeBtn.addEventListener('click', () => {
+    closeSearchBar();
+});
+
+function closeSearchBar() {
+    
+        search.forEach(element => {
+            element.style.transition = "100ms"
+            element.style.width = "0px";
+        });
+        invisible.forEach(element => {
+            element.style.display = "none"
+        });
+
+        openBtn.style.display = "block"
+    }
+    

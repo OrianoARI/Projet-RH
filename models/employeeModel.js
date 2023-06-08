@@ -14,10 +14,15 @@ const employeeSchema = new mongoose.Schema({
         }
     },
     function: {
-        type: String,
+        type: String
     },
     blame: {
         type: Number,
+        validate: {
+            validator: function (value) {
+                return /^[0-2]$/u.test(value);
+            }
+        }
     },
     photo: {
         type: String,
