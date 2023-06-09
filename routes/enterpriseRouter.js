@@ -6,7 +6,6 @@ const functionModel = require('../models/functionModel');
 const authguard = require('../services/authguard');
 const upload = require('../services/multer');
 const fs = require('fs');
-const { log } = require('console');
 
 
 
@@ -14,7 +13,9 @@ const { log } = require('console');
 
 enterpriseRouter.get('/', async (req, res) => {
     try {
-        res.render('pages/registration.twig');
+        res.render('pages/registration.twig', {
+            enterpriseError: ""
+        });
     } catch (error) {
         res.send(error);
         response.status(404);
@@ -28,12 +29,24 @@ enterpriseRouter.post('/subscribe', async (req, res) => {
     try {
         let hashedPassword = await bcrypt.hash(req.body.password, 10);
         req.body.password = hashedPassword;
-        let enterprise = new enterpriseModel(req.body);// création d'une entreprise via remplissage formulaire d'inscription
-        await enterprise.save();
-        res.redirect('/');
+        let enterprises = await enterpriseModel.findOne({ siret: req.body.siret });
+        if (enterprises) {
+            console.log(enterprises);
+            let siretError = "Une entreprise avec ce numéro de SIRET existe déjà"
+            res.status(400).render("pages/registration.twig", {
+                siretError: { siretError }
+            });
+        } else {
+            let enterprise = new enterpriseModel(req.body);// création d'une entreprise via remplissage formulaire d'inscription
+            await enterprise.save();
+            res.redirect('/');
+        }
     } catch (error) {
-        res.status(400).send("Erreur de validation des données")
-        res.send(error);
+
+        let registerError = "Les données saisies sont incorrectes"
+        res.status(400).render("pages/registration.twig", {
+            enterpriseError: { registerError }
+        });
     }
 });
 
@@ -51,13 +64,13 @@ enterpriseRouter.post('/login', async (req, res) => {
             } else {
                 let loginError = "Erreur de mot de passe"
                 res.status(400).render("pages/registration.twig", {
-                    enterpriseError : {loginError}
+                    enterpriseError: { loginError }
                 });
             }
         } else {
             let noEnterpriseError = "Ce mail n'est associé à aucune entreprise";
             res.status(400).render("pages/registration.twig", {
-                enterpriseError : {noEnterpriseError}
+                enterpriseError: { noEnterpriseError }
             });
         }
     } catch (error) {
@@ -76,7 +89,6 @@ enterpriseRouter.post('/addFunction', authguard, async (req, res) => {
         res.redirect('/dashboard');
     } catch (error) {
         res.status(400).send("Erreur de validation des données")
-        res.send(error);
     }
 });
 
@@ -132,9 +144,22 @@ enterpriseRouter.post('/addEmployee', authguard, upload.single("photo"), async (
         }
 
         req.body.enterpriseId = req.session.enterpriseId;
-        let employee = new employeeModel(req.body);
-        await employee.save();
-        res.redirect('/dashboard');
+        let employeeFunction = await functionModel.findOne({ name: req.body.function })
+        if (!employeeFunction) {
+            req.body.enterpriseId = req.session.enterpriseId;
+            let newFunction = new functionModel({
+                enterpriseId: req.session.enterpriseId,
+                name: req.body.function
+            });
+            await newFunction.save();
+            let employee = new employeeModel(req.body);
+            await employee.save();
+            res.redirect('/dashboard');
+        } else {
+            let employee = new employeeModel(req.body);
+            await employee.save();
+            res.redirect('/dashboard');
+        }
     } catch (error) {
         console.log(error);
         res.send(error);
@@ -200,7 +225,7 @@ enterpriseRouter.get('/blameEmployee/:id', authguard, async (req, res) => {
 
 //Modifier un employé
 
-enterpriseRouter.post('/updateEmployee/:id',authguard, upload.single('photo'), async (req, res) => {
+enterpriseRouter.post('/updateEmployee/:id', authguard, upload.single('photo'), async (req, res) => {
     try {
         if (req.file) {
             let delPhoto = await employeeModel.findOne({ _id: req.params.id });
@@ -210,9 +235,22 @@ enterpriseRouter.post('/updateEmployee/:id',authguard, upload.single('photo'), a
             }
             req.body.photo = req.file.filename;
         }
-        let employee = await employeeModel.updateOne({ _id: req.params.id }, req.body);
-        res.redirect('/dashboard');
-    } catch (error) {
+        let employeeFunction = await functionModel.findOne({ name: req.body.function })
+        if (!employeeFunction) {
+            req.body.enterpriseId = req.session.enterpriseId;
+            let newFunction = new functionModel({
+                enterpriseId: req.session.enterpriseId,
+                name: req.body.function
+            });
+            await newFunction.save();
+            let employee = await employeeModel.updateOne({ _id: req.params.id }, req.body);
+            res.redirect('/dashboard');
+        } else {
+            let employee = await employeeModel.updateOne({ _id: req.params.id }, req.body);
+            res.redirect('/dashboard');
+        }
+    }
+    catch (error) {
         console.log('error');
         res.send(error);
     }

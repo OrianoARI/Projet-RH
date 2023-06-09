@@ -45,8 +45,19 @@ body {
     height: auto;
     border: 3px solid rgba(0, 0, 0, 0.26);
     border-radius: 20px;
-    background-color: rgba(255, 255, 255, 0.60);
+    background-color: rgba(255, 255, 255, 0.832);
 }
+
+
+.name {
+    text-transform: capitalize;
+}
+
+.card em {
+    text-transform:lowercase;
+    font-style: normal;
+}
+
 
 .card img {
     width: 150px;
@@ -101,9 +112,15 @@ h2 {
     margin-top: 20px;
     margin-bottom: 20px;
     border-radius: 20px;
+    padding: 5px;
     display: flex;
     background-color: rgba(0, 0, 0, 0.300);
 }
+
+#searchForm {
+    flex-wrap: wrap;
+}
+
 
 /* Search bar--------------------------------------------------------------------------------- */
 
@@ -151,6 +168,11 @@ select {
 
 .dashboard-form form {
     display: flex;
+    align-items: center;
+}
+
+.preview img {
+    border-radius: 60px;
 }
 
 input:focus {
@@ -176,7 +198,6 @@ button:hover {
     font-weight: bold;
 }
 
-#logoutBtn,
 .search-bar button {
     margin-left: auto;
     margin-bottom: auto;
@@ -185,6 +206,15 @@ button:hover {
     width: 100px;
     padding: 5px;
     border-radius: 20px;
+}
+
+#logoutBtn {
+    margin-bottom: auto;
+    margin-top: auto;
+    width: 100px;
+    padding: 5px;
+    border-radius: 20px;
+    align-items: center;
 }
 
 button a {
@@ -254,8 +284,8 @@ footer {
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        margin-left: 30%;
-        margin-right: 30%;
+        margin-left: 20%;
+        margin-right: 20%;
     }
 
     .dashboard-form .search-bar {
@@ -268,8 +298,8 @@ footer {
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        margin-left: 30%;
-        margin-right: 30%;
+        margin-left: 10%;
+        margin-right: 10%;
         text-align: center;
     }
 
@@ -334,8 +364,8 @@ footer {
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        margin-left: 10%;
-        margin-right: 10%;
+        margin-left: 15%;
+        margin-right: 15%;
     }
     
 }

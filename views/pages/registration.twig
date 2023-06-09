@@ -10,12 +10,18 @@
 			<div class="form-container">
 				<section class="subscribe">
 					<h3>Créer un compte entreprise</h3>
+					{% if enterpriseError %}
+						<p>{{enterpriseError.registerError}}</p>
+					{% endif %}
+					{% if siretError %}
+						<p>{{siretError.siretError}}</p>
+					{% endif %}
 					<form class="sub-form" action="/subscribe" method="post">
-						<input type="text" name="name" id="firmName" placeholder="Nom de l'entreprise">
-						<input type="number" name="siret" id="siret" placeholder="SIRET (14 chiffres sanss espace ni tiret)">
-						<input type="email" name="mail" id="subMail" placeholder="Adresse mail de l'entreprise">
-						<input type="text" name="ceoName" id="ceoName" placeholder="Nom du directeur">
-						<input type="password" name="password" id="subPassword" placeholder="mot de passe">
+						<input type="text" name="name" id="firmName" placeholder="Nom de l'entreprise" required>
+						<input type="number" name="siret" id="siret" title="14 chiffres sans espace ni tiret" placeholder="SIRET" required>
+						<input type="email" name="mail" id="subMail" placeholder="Adresse mail de l'entreprise" required>
+						<input type="text" name="ceoName" id="ceoName" placeholder="Nom du directeur" required>
+						<input type="password" name="password" id="subPassword" title="minimum 8 caractères, 1 chiffre, 1 majuscule, un caractère spécial sauf <,>,&" placeholder="Mot de passe" required>
 						<div class="button-bar">
 							<button type="submit">Créer</button>
 							<button type="reset">Effacer</button>
@@ -24,13 +30,17 @@
 				</section>
 				<section class="login">
 					<h3>Vous avez déjà un compte</h3>
-					{% if enterpriseError %}<p>{{enterpriseError.noEnterpriseError}}</p>{% endif %}
+					{% if enterpriseError %}
+						<p>{{enterpriseError.noEnterpriseError}}</p>
+					{% endif %}
 					<form class="log-form" action="/login" method="post">
 						<div class="email">
 							<i class="fa-solid fa-envelope" style="color: #f79421;"></i><input type="email" name="mail" id="mail" placeholder="Adresse mail de l'entreprise"></div>
 						<div class="password">
 							<i class="fa-solid fa-lock" style="color: #f79421;"></i><input type="password" name="password" id="password" placeholder="Votre mot de passe"></div>
-							{% if enterpriseError %}<p>{{enterpriseError.loginError}}</p>{% endif %}
+						{% if enterpriseError %}
+							<p>{{enterpriseError.loginError}}</p>
+						{% endif %}
 						<div class="button-bar">
 							<button type="submit">Connexion</button>
 						</div>

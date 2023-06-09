@@ -7,7 +7,13 @@ const functionSchema = new mongoose.Schema({
     name: {
         type: String,
         unique: true,
-        required: true
+        required: true,
+        lowercase: true,
+        validate: {
+            validator: function (value) {
+                return /^[a-zA-Z\- ]+$/ui.test(value);
+            }
+        }
     }
 });
 

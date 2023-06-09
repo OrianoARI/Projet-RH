@@ -7,35 +7,72 @@
 				{{enterprise.enterpriseName}}
 			{% endif %}
 		</h2>
-		<div class="dashboard-form">
+		<div class="dashboard-form" id="searchForm">
 			<form action="/addEmployee" method="post" enctype="multipart/form-data">
-				<input type="text" name="name" id="employeeName" placeholder="Nom de l'employé">
-				<select name="function" id="employeeFunction">
+				<input type="text" name="name" id="employeeName" placeholder="Nom de l'employé" required>
+				<select name="function" id="employeeFunction" onchange="handleOptionChange(this)" value="0" required>
 					<option value="0">Fonction</option>
-							{% if employeeFunctions %}
-								{% for employeeFunctions in employeeFunctions %}
-									<option value="{{employeeFunctions.name}}">{{employeeFunctions.name}}</option>
-								{% endfor %}
-							{% endif %}
-						</select>
-				<input type="number" name="blame" id="employeeBlame" placeholder="Nombre de blâme">
-				<input type="file" name="photo" id="employeePhoto">
+					{% if employeeFunctions %}
+						{% for employeeFunctions in employeeFunctions %}
+							<option value="{{employeeFunctions.name}}">{{employeeFunctions.name}}</option>
+						{% endfor %}
+					{% endif %}
+					<option value="custom">Autre fonction</option>
+				</select>
+				<div id="customInput" style="display: none;">
+					<input type="text" id="customText">
+					<button type="button" onclick="handleCustomSubmit()">Valider</button>
+				</div>
+				<script>
+					function handleOptionChange(selectElement) {
+let selectedValue = selectElement.value;
+
+if (selectedValue === 'custom') {
+document.getElementById('customInput').style.display = 'block';
+} else {
+document.getElementById('customInput').style.display = 'none';
+}
+}
+
+function handleCustomSubmit() {
+let customValue = document.getElementById('customText').value;
+
+// nouvel élément option
+let newOption = document.createElement('option');
+newOption.value = customValue;
+newOption.text = customValue;
+
+// Ajout du nouvel élément option à la liste déroulante
+let selectElement = document.getElementById('employeeFunction');
+selectElement.appendChild(newOption);
+
+// Sélection de la nouvelle option ajoutée
+selectElement.value = customValue;
+
+// Masquage du champ de texte
+document.getElementById('customInput').style.display = 'none';
+
+}
+				</script>
+				<input type="number" name="blame" id="employeeBlame" placeholder="Nombre de blâme" required>
+				<input type="file" name="photo" id="employeePhoto" onchange="preview(event)" required>
+                <div class="preview"></div>
 				<div class="button-bar">
 					<button class="btn" type="submit" id="addBtn">Ajouter</button>
 					<button class="btn" type="reset">Effacer</button>
 				</div>
 			</form>
-            <form action="/addFunction" method="post">
-            <input type="text" name="name" id="newFunction" placeholder="Saisir la nouvelle fonction">
-            <button type="submit">Ajouter</button>
-            </form>
+			<form action="/addFunction" method="post">
+				<input type="text" name="name" id="newFunction" placeholder="Saisir la nouvelle fonction" required>
+				<button type="submit">Ajouter</button>
+			</form>
 			<button class="btn" id="logoutBtn" type="button" onclick="window.location.href='/logout'">Déconnexion</button>
 		</div>
 		<div class="container">
 			<div class=" search-container">
 				<div class="dashboard-form search-bar">
 					<form action="/dashboard/" method="get" class="search-bar">
-						<select class="invisible" name="function" id="function">
+						<select class="invisible" name="function" id="function" required>
 							<option value="0">Filtrer par fonction</option>
 							{% if employees %}
 								{% for employeeFunctions in employeeFunctions %}
@@ -45,7 +82,7 @@
 						</select>
 						<button class="invisible" type="submit">Filtrer</button>
 					</form>
-					<form action="/dashboard/" method="get" class="search-bar">
+					<form action="/dashboard/" method="get" class="search-bar" required>
 						<input class="invisible" name="name" type="text" placeholder="Rechercher par nom">
 						<button class="invisible" type="submit">Rechercher</button>
 					</form>
@@ -67,17 +104,20 @@
 			{% if employees %}
 				{% for employee in employees %}
 					<div class="card">
-						<p>Nom:
-							{{employee.name}}</p>
-						<p>Fonction:
-							{{employee.function}}</p>
-						<p>Nombre de blâme:
-							{{employee.blame}}</p>
+						<p class="line">Nom:
+							<strong class="name">{{employee.name}}</strong>
+						</p>
+						<p class="line">Fonction:
+							<em>{{employee.function}}</em>
+						</p>
+						<p class="line">Nombre de blâme:
+							<em>{{employee.blame}}</em>
+						</p>
 						<div class="photo">
 							<img src="/uploads/{{employee.photo}}">
 						</div>
 						<div class="button-bar">
-							<button class="open-modal" type="button" onclick='openModal(this)' data-employee={{employee | json_encode() | escape}} data-employeeid={{employee.id}}>Update</button>
+							<button class="open-modal" type="button" onclick='openModal(this)' data-employee='{{employee | json_encode() | raw}}' data-employeeid={{employee.id}}>Update</button>
 							<button id="delete" type="button">
 								<a href="deleteEmployee/{{employee.id}}">Supprimer</a>
 							</button>
@@ -87,6 +127,18 @@
 						</div>
 					</div>
 				{% endfor %}
+                <script>
+	document.addEventListener('DOMContentLoaded', function() {
+		function capitalize() {
+			const paragraphs = document.querySelectorAll('.line');
+			paragraphs.forEach(paragraph => {
+				paragraph.innerText = paragraph.innerText.charAt(0).toUpperCase() + paragraph.innerText.slice(1);
+			});
+		}
+
+		capitalize();
+	});
+</script>
 			{% else %}
 				<p class="empty">Vous n'avez pas encore d'employé. Vous pouvez ajouter votre premier employé en complétant le formulaire ci-dessus.</p>
 			{% endif %}
@@ -103,8 +155,6 @@
 				</div>
 			</form>
 		</div>
-
-
 	{% endblock %}
 {% endblock %}
 {% block overlay %}

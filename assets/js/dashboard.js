@@ -16,6 +16,7 @@ function openModal(elem) {
     filter.classList.remove('filter');
     document.documentElement.style.overflow = 'hidden';
 
+    console.log(elem);
     let dataEmployee = JSON.parse(elem.getAttribute('data-employee'))._doc;
     let employeeId = elem.getAttribute('data-employeeId');
     console.log(employeeId);
@@ -58,15 +59,40 @@ closeBtn.addEventListener('click', () => {
 });
 
 function closeSearchBar() {
-    
-        search.forEach(element => {
-            element.style.transition = "100ms"
-            element.style.width = "0px";
-        });
-        invisible.forEach(element => {
-            element.style.display = "none"
-        });
 
-        openBtn.style.display = "block"
+    search.forEach(element => {
+        element.style.transition = "100ms"
+        element.style.width = "0px";
+    });
+    invisible.forEach(element => {
+        element.style.display = "none"
+    });
+
+    openBtn.style.display = "block"
+}
+
+
+
+
+
+function preview(event) {
+
+    document.querySelector('.preview').innerHTML = ""
+    console.log('boloss');
+    let file = event.target.files[0];
+
+    let reader = new FileReader();
+
+    reader.onload = function () {
+        let imagePreview = document.querySelector('.preview')
+        imagePreview.innerHTML = "";
+
+        let img = document.createElement('img');
+        img.src = reader.result;
+        img.style.maxWidth = '50px';
+        img.style.maxHeight = '50px';
+
+        imagePreview.appendChild(img);
     }
-    
+ reader.readAsDataURL(file);
+}
