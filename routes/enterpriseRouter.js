@@ -9,6 +9,7 @@ const fs = require('fs');
 
 
 
+
 //afficher la page d'inscription
 
 enterpriseRouter.get('/', async (req, res) => {
@@ -17,8 +18,8 @@ enterpriseRouter.get('/', async (req, res) => {
             enterpriseError: ""
         });
     } catch (error) {
+        res.status(400);
         res.send(error);
-        response.status(404);
     }
 });
 
@@ -27,11 +28,10 @@ enterpriseRouter.get('/', async (req, res) => {
 
 enterpriseRouter.post('/subscribe', async (req, res) => {
     try {
-        let hashedPassword = await bcrypt.hash(req.body.password, 10);
+        let hashedPassword = bcrypt.hashSync(req.body.password, 10);// le salt(10) peut être mis dans le .env, ne pas oublier parseInt
         req.body.password = hashedPassword;
         let enterprises = await enterpriseModel.findOne({ siret: req.body.siret });
         if (enterprises) {
-            console.log(enterprises);
             let siretError = "Une entreprise avec ce numéro de SIRET existe déjà"
             res.status(400).render("pages/registration.twig", {
                 siretError: { siretError }
@@ -42,7 +42,6 @@ enterpriseRouter.post('/subscribe', async (req, res) => {
             res.redirect('/');
         }
     } catch (error) {
-
         let registerError = "Les données saisies sont incorrectes"
         res.status(400).render("pages/registration.twig", {
             enterpriseError: { registerError }
@@ -56,9 +55,9 @@ enterpriseRouter.post('/login', async (req, res) => {
     try {
         let enterprise = await enterpriseModel.findOne({ mail: req.body.mail });
         if (enterprise) {
-            let match = await bcrypt.compare(req.body.password, enterprise.password);
+            let match = bcrypt.compareSync(req.body.password, enterprise.password);
             req.session.enterpriseId = enterprise._id;
-            req.session.enterpriseName = enterprise.name;
+            req.session.enterpriseName = enterprise.name;//pour afficher le nom de l'entreprise sur le dashboard
             if (match) {
                 res.redirect("/dashboard");
             } else {
@@ -92,11 +91,16 @@ enterpriseRouter.post('/addFunction', authguard, async (req, res) => {
     }
 });
 
+// to do afficher les erreurs de recherche
+
+
+
 
 //rechercher les employés pour les afficher sur la page dashboard
 enterpriseRouter.get('/dashboard', authguard, async (req, res) => {
     try {
-        let name = req.query.name;
+        let name = req.query.name; // paramètre de requête avec "?"
+        console.log(name);
         let employeeFunction = req.query.function;
         let enterpriseId = req.session.enterpriseId;
         if (name) {
@@ -105,37 +109,54 @@ enterpriseRouter.get('/dashboard', authguard, async (req, res) => {
             let employees = await employeeModel.find({ enterpriseId: enterpriseId });
             // Filtrer les employés dont le nom correspond au terme de recherche insensible à la casse
             employees = employees.filter(employee => employee.name.toLowerCase() === searchTerm);
-
+            if (employees.length === 0) {
+                let noEmployee = "Aucun employé ne correspond à votre recherche"
+                res.render("pages/dashboard.twig", {
+                    nameFilter: { noEmployee }
+                });
+            } else {
             res.render("pages/dashboard.twig", {
                 employees: employees,
-                employeeFunctions: employeeFunctions
-
-            });
-        } else if (employeeFunction) {
-
-            let employees = await employeeModel.find({ "function": employeeFunction, enterpriseId: enterpriseId });
-            let employeeFunctions = await functionModel.find({ enterpriseId: enterpriseId });
-            res.render("pages/dashboard.twig", {
-                employees: employees,
-                employeeFunctions: employeeFunctions
-            });
-
-        } else {
-            let enterpriseId = req.session.enterpriseId;
-            let employee = await employeeModel.find({ enterpriseId: enterpriseId })
-            let employeeFunctions = await functionModel.find({ enterpriseId: enterpriseId });
-            res.render("pages/dashboard.twig", {
-                employees: employee,
                 employeeFunctions: employeeFunctions
             });
         }
+    } else if (employeeFunction) {
+        // let noFunction = "Vous n'avez pas sélectionné de fonction"
+        // res.render("pages/dashboard.twig", {
+        //     fonctionFilter: { noFunction }
+        // });
+        let employees = await employeeModel.find({ "function": employeeFunction, enterpriseId: enterpriseId });
+        let employeeFunctions = await functionModel.find({ enterpriseId: enterpriseId });
+        if (employees.length === 0) {
+            let noEmployee = "Aucun employé ne correspond à votre recherche"
+            res.render("pages/dashboard.twig", {
+                employeeFilter: { noEmployee }
+            });
+        } else {
+            res.render("pages/dashboard.twig", {
+                employees: employees,
+                employeeFunctions: employeeFunctions
+            });
+        }
+
+} else {
+    let enterpriseId = req.session.enterpriseId;
+    let employee = await employeeModel.find({ enterpriseId: enterpriseId });
+    let employeeNumber = await employeeModel.find({ enterpriseId: enterpriseId }).count();
+    let employeeFunctions = await functionModel.find({ enterpriseId: enterpriseId });
+    res.render("pages/dashboard.twig", {
+        employees: employee,
+        employeeFunctions: employeeFunctions,
+        employeeNumber: employeeNumber
+    });
+}
     } catch (error) {
-        res.send(error);
-    }
+    res.send(error);
+}
 });
 
 
-//créer un employé
+//créer un employé ==> à mettre dans employeeRouter.js 
 
 enterpriseRouter.post('/addEmployee', authguard, upload.single("photo"), async (req, res) => {
     try {
@@ -166,7 +187,7 @@ enterpriseRouter.post('/addEmployee', authguard, upload.single("photo"), async (
     }
 });
 
-//supprimer un employé
+//supprimer un employé ==> à mettre dans employeeRouter.js 
 
 enterpriseRouter.get('/deleteEmployee/:id', authguard, async (req, res) => {
     try {
@@ -187,7 +208,7 @@ enterpriseRouter.get('/deleteEmployee/:id', authguard, async (req, res) => {
 });
 
 
-//récupération d'un employé pour l'afficher dans la modale update
+//récupération d'un employé pour l'afficher dans la modale update ==> à mettre dans employeeRouter.js 
 
 enterpriseRouter.get('/updateEmployee/:id', authguard, async (req, res) => {
     try {
@@ -201,7 +222,7 @@ enterpriseRouter.get('/updateEmployee/:id', authguard, async (req, res) => {
     }
 });
 
-//blâmer un employé
+//blâmer un employé ==> à mettre dans employeeRouter.js 
 
 enterpriseRouter.get('/blameEmployee/:id', authguard, async (req, res) => {
     try {
@@ -223,7 +244,7 @@ enterpriseRouter.get('/blameEmployee/:id', authguard, async (req, res) => {
     }
 });
 
-//Modifier un employé
+//Modifier un employé ==> à mettre dans employeeRouter.js 
 
 enterpriseRouter.post('/updateEmployee/:id', authguard, upload.single('photo'), async (req, res) => {
     try {
@@ -243,10 +264,10 @@ enterpriseRouter.post('/updateEmployee/:id', authguard, upload.single('photo'), 
                 name: req.body.function
             });
             await newFunction.save();
-            let employee = await employeeModel.updateOne({ _id: req.params.id }, req.body);
+            let employee = await employeeModel.updateOne({ _id: req.params.id }, req.body, { runValidators: true });
             res.redirect('/dashboard');
         } else {
-            let employee = await employeeModel.updateOne({ _id: req.params.id }, req.body);
+            let employee = await employeeModel.updateOne({ _id: req.params.id }, req.body, { runValidators: true });
             res.redirect('/dashboard');
         }
     }

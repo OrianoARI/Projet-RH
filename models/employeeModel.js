@@ -29,5 +29,5 @@ const employeeSchema = new mongoose.Schema({
     }
 });
 
-const employeeModel = mongoose.model('Employee', employeeSchema);
+const employeeModel = mongoose.model('Employee', employeeSchema); //normalement la collection doit toujours être au pluriel : employees
 module.exports = employeeModel;

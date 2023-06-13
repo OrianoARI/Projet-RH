@@ -54,7 +54,7 @@ body {
 }
 
 .card em {
-    text-transform:lowercase;
+    text-transform: lowercase;
     font-style: normal;
 }
 
@@ -112,7 +112,6 @@ h2 {
     margin-top: 20px;
     margin-bottom: 20px;
     border-radius: 20px;
-    padding: 5px;
     display: flex;
     background-color: rgba(0, 0, 0, 0.300);
 }
@@ -209,12 +208,8 @@ button:hover {
 }
 
 #logoutBtn {
-    margin-bottom: auto;
-    margin-top: auto;
-    width: 100px;
-    padding: 5px;
-    border-radius: 20px;
-    align-items: center;
+background-color: transparent;
+border: none;
 }
 
 button a {
@@ -281,6 +276,7 @@ footer {
 /* ----------------------------------------------------------------------------------- */
 @media (max-width: 1270px) {
     .dashboard-form {
+        padding: 0%;
         flex-direction: column;
         justify-content: center;
         align-items: center;
@@ -290,7 +286,7 @@ footer {
 
     .dashboard-form .search-bar {
         flex-direction: row;
-        padding: 10px;
+
     }
 
     .search-container {
@@ -367,5 +363,5 @@ footer {
         margin-left: 15%;
         margin-right: 15%;
     }
-    
+
 }

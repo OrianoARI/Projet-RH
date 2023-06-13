@@ -1,30 +1,31 @@
 {% extends "base.twig" %}
 
 {% block main %}
-	{% block form %}
-		<h2>Tableau de bord de la société
-			{% if enterprise.enterpriseId %}
-				{{enterprise.enterpriseName}}
-			{% endif %}
-		</h2>
-		<div class="dashboard-form" id="searchForm">
-			<form action="/addEmployee" method="post" enctype="multipart/form-data">
-				<input type="text" name="name" id="employeeName" placeholder="Nom de l'employé" required>
-				<select name="function" id="employeeFunction" onchange="handleOptionChange(this)" value="0" required>
-					<option value="0">Fonction</option>
-					{% if employeeFunctions %}
-						{% for employeeFunctions in employeeFunctions %}
-							<option value="{{employeeFunctions.name}}">{{employeeFunctions.name}}</option>
-						{% endfor %}
-					{% endif %}
-					<option value="custom">Autre fonction</option>
-				</select>
-				<div id="customInput" style="display: none;">
-					<input type="text" id="customText">
-					<button type="button" onclick="handleCustomSubmit()">Valider</button>
-				</div>
-				<script>
-					function handleOptionChange(selectElement) {
+	<main>
+		{% block form %}
+			<h2>Tableau de bord de la société
+				{% if enterprise.enterpriseId %}
+					{{enterprise.enterpriseName}}
+				{% endif %}
+			</h2>
+			<div class="dashboard-form" id="searchForm">
+				<form action="/addEmployee" method="post" enctype="multipart/form-data">
+					<input type="text" name="name" id="employeeName" placeholder="Nom de l'employé" required>
+					<select name="function" id="employeeFunction" onchange="handleOptionChange(this)" value="0" required>
+						<option value="0">Fonction</option>
+						{% if employeeFunctions %}
+							{% for employeeFunctions in employeeFunctions %}
+								<option value="{{employeeFunctions.name}}">{{employeeFunctions.name}}</option>
+							{% endfor %}
+						{% endif %}
+						<option value="custom">Autre fonction</option>
+					</select>
+					<div id="customInput" style="display: none;">
+						<input type="text" id="customText">
+						<button type="button" onclick="handleCustomSubmit()">Valider</button>
+					</div>
+					<script>
+						function handleOptionChange(selectElement) {
 let selectedValue = selectElement.value;
 
 if (selectedValue === 'custom') {
@@ -53,113 +54,123 @@ selectElement.value = customValue;
 document.getElementById('customInput').style.display = 'none';
 
 }
-				</script>
-				<input type="number" name="blame" id="employeeBlame" placeholder="Nombre de blâme" required>
-				<input type="file" name="photo" id="employeePhoto" onchange="preview(event)" required>
-                <div class="preview"></div>
-				<div class="button-bar">
-					<button class="btn" type="submit" id="addBtn">Ajouter</button>
-					<button class="btn" type="reset">Effacer</button>
-				</div>
-			</form>
-			<form action="/addFunction" method="post">
-				<input type="text" name="name" id="newFunction" placeholder="Saisir la nouvelle fonction" required>
-				<button type="submit">Ajouter</button>
-			</form>
-			<button class="btn" id="logoutBtn" type="button" onclick="window.location.href='/logout'">Déconnexion</button>
-		</div>
-		<div class="container">
-			<div class=" search-container">
-				<div class="dashboard-form search-bar">
-					<form action="/dashboard/" method="get" class="search-bar">
-						<select class="invisible" name="function" id="function" required>
-							<option value="0">Filtrer par fonction</option>
-							{% if employees %}
-								{% for employeeFunctions in employeeFunctions %}
-									<option value="{{employeeFunctions.name}}">{{employeeFunctions.name}}</option>
-								{% endfor %}
-							{% endif %}
-						</select>
-						<button class="invisible" type="submit">Filtrer</button>
-					</form>
-					<form action="/dashboard/" method="get" class="search-bar" required>
-						<input class="invisible" name="name" type="text" placeholder="Rechercher par nom">
-						<button class="invisible" type="submit">Rechercher</button>
-					</form>
-					<button class="invisible">
-						<a class="invisible" href="/dashboard">Réinitialiser</a>
-					</button>
-				</div>
-			</div>
-			<button class="search-bar-btn open-btn" type"button">
-				<i class="fa-solid fa-circle-chevron-left fa-flip fa-2xl" style="color: #f79421;"></i>
-			</button>
-			<button class="search-bar-btn close-btn invisible" type"button">
-				<i class="fa-solid fa-circle-chevron-left fa-flip fa-2xl" style="color: #f79421;"></i>
-			</button>
-		</div>
-	{% endblock %}
-	{% block datas %}
-		<div class="card-container">
-			{% if employees %}
-				{% for employee in employees %}
-					<div class="card">
-						<p class="line">Nom:
-							<strong class="name">{{employee.name}}</strong>
-						</p>
-						<p class="line">Fonction:
-							<em>{{employee.function}}</em>
-						</p>
-						<p class="line">Nombre de blâme:
-							<em>{{employee.blame}}</em>
-						</p>
-						<div class="photo">
-							<img src="/uploads/{{employee.photo}}">
-						</div>
-						<div class="button-bar">
-							<button class="open-modal" type="button" onclick='openModal(this)' data-employee='{{employee | json_encode() | raw}}' data-employeeid={{employee.id}}>Update</button>
-							<button id="delete" type="button">
-								<a href="deleteEmployee/{{employee.id}}">Supprimer</a>
-							</button>
-							<button class="btn" type="button">
-								<a href="blameEmployee/{{employee.id}}">Blâmer</a>
-							</button>
-						</div>
+					</script>
+					<input type="number" name="blame" id="employeeBlame" placeholder="Nombre de blâme" required>
+					<input type="file" name="photo" id="employeePhoto" onchange="preview(event)" required>
+					<div class="preview"></div>
+					<div class="button-bar">
+						<button class="btn" type="submit" id="addBtn">Ajouter</button>
+						<button class="btn" type="reset">Effacer</button>
 					</div>
-				{% endfor %}
-                <script>
-	document.addEventListener('DOMContentLoaded', function() {
-		function capitalize() {
-			const paragraphs = document.querySelectorAll('.line');
-			paragraphs.forEach(paragraph => {
-				paragraph.innerText = paragraph.innerText.charAt(0).toUpperCase() + paragraph.innerText.slice(1);
-			});
-		}
-
-		capitalize();
-	});
-</script>
-			{% else %}
-				<p class="empty">Vous n'avez pas encore d'employé. Vous pouvez ajouter votre premier employé en complétant le formulaire ci-dessus.</p>
-			{% endif %}
-		</div>
-		<div class="update-modal hidden">
-			<form id="action" method="post" enctype="multipart/form-data">
-				<input type="text" name="name" id="modalName" placeholder="Nom de l'employé">
-				<input type="text" name="function" id="modalFunction" placeholder="Fonction">
-				<input type="number" name="blame" id="modalBlame" placeholder="Nombre de blâme">
-				<input type="file" name="photo" id="modalPhoto">
-				<div class="button-bar">
-					<button class="btn" type="submit" id="updateBtn">Enregistrer</button>
-					<button id="closeModal" class="btn" type="button">Annuler</button>
+				</form>
+				<form action="/addFunction" method="post">
+					<input type="text" name="name" id="newFunction" placeholder="Saisir la nouvelle fonction" required>
+					<button type="submit">Ajouter</button>
+				</form>
+				<button class="btn" id="logoutBtn" type="button" onclick="window.location.href='/logout'"><i class="fa-sharp fa-solid fa-arrow-right-from-bracket fa-2xl" style="color: #000000;"></i></button>
+			</div>
+			<div class="container">
+				<div class=" search-container">
+					<div class="dashboard-form search-bar">
+						<form action="/dashboard" method="get" class="search-bar">
+							<select class="invisible" name="function" id="function" required>
+								<option value="0">Filtrer par fonction</option>
+								{% if employees %}
+									{% for employeeFunctions in employeeFunctions %}
+										<option value="{{employeeFunctions.name}}">{{employeeFunctions.name}}</option>
+									{% endfor %}
+								{% endif %}
+							</select>
+							<button class="invisible" type="submit">Filtrer</button>
+						</form>
+						<form action="/dashboard/" method="get" class="search-bar" required>
+							<input class="invisible" name="name" type="text" placeholder="Rechercher par nom">
+							<button class="invisible" type="submit">Rechercher</button>
+						</form>
+						<button class="invisible">
+							<a class="invisible" href="/dashboard">Réinitialiser</a>
+						</button>
+					</div>
 				</div>
-			</form>
-		</div>
+				<button class="search-bar-btn open-btn" type"button">
+					<i class="fa-solid fa-circle-chevron-left fa-flip fa-2xl" style="color: #f79421;"></i>
+				</button>
+				<button class="search-bar-btn close-btn invisible" type"button">
+					<i class="fa-solid fa-circle-chevron-left fa-flip fa-2xl" style="color: #f79421;"></i>
+				</button>
+			</div>
+		{% endblock %}
+		{% block datas %}
+			<div class="card-container">
+				{% if employees %}
+					{% for employee in employees %}
+						<div class="card">
+							<p class="line">Nom:
+								<strong class="name">{{employee.name}}</strong>
+							</p>
+							<p class="line">Fonction:
+								<em>{{employee.function}}</em>
+							</p>
+							<p class="line">Nombre de blâme:
+								<em>{{employee.blame}}</em>
+							</p>
+							<div class="photo">
+								<img src="/uploads/{{employee.photo}}">
+							</div>
+							<div class="button-bar">
+								<button class="open-modal" type="button" onclick='openModal(this)' data-employee='{{employee | json_encode() | raw}}' data-employeeid={{employee.id}}>Modifier</button>
+								<button id="delete" type="button">
+									<a href="deleteEmployee/{{employee.id}}">Supprimer</a>
+								</button>
+								<button class="btn" type="button">
+									<a href="blameEmployee/{{employee.id}}">Blâmer</a>
+								</button>
+							</div>
+						</div>
+					{% endfor %}
+					<script>
+						document.addEventListener('DOMContentLoaded', function () {
+function capitalize() {
+const paragraphs = document.querySelectorAll('.line');
+paragraphs.forEach(paragraph => {
+paragraph.innerText = paragraph.innerText.charAt(0).toUpperCase() + paragraph.innerText.slice(1);
+});
+}
+
+capitalize();
+});
+					</script>
+				{% endif %}
+				{% if employeeNumber <= 0 %}				
+					<p class="empty">Vous n'avez pas encore d'employé. Vous pouvez ajouter votre premier employé en complétant le formulaire ci-dessus.</p>
+				{% endif %}<!--Tester la présence d'employé en BDD -->
+				{% if nameFilter %}
+					<p class="empty">
+						{{nameFilter.noEmployee}}</p>
+				{% endif %}
+				{% if functionFilter %}
+					<p class="empty">{{functionFilter.noFunction}}</p>
+				{% endif %}
+
+			</div>
+			<div class="update-modal hidden">
+				<form id="action" method="post" enctype="multipart/form-data">
+					<input type="text" name="name" id="modalName" placeholder="Nom de l'employé">
+					<input type="text" name="function" id="modalFunction" placeholder="Fonction">
+					<input type="number" name="blame" id="modalBlame" placeholder="Nombre de blâme">
+					<input type="file" name="photo" id="modalPhoto">
+					<div class="button-bar">
+						<button class="btn" type="submit" id="updateBtn">Enregistrer</button>
+						<button id="closeModal" class="btn" type="button">Annuler</button>
+					</div>
+				</form>
+			</div>
+		{% endblock %}
 	{% endblock %}
-{% endblock %}
-{% block overlay %}
-	<div class="filter overlay"></div>
-{% endblock %}
+	{% block overlay %}
+		<div class="filter overlay"></div>
+	{% endblock %}
+</main>
 {% block scriptJs %}
 	<script src="/js/dashboard.js"></script>
 {% endblock %}

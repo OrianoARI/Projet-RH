@@ -10,16 +10,17 @@ require("dotenv").config();
 
 const app = express();
 
-app.use(express.static("assets"));
+app.use(express.static("assets"));//défini le path des fichier style
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true }));//pour utiliser le format form-data
 app.use(session({
-    secret: 'secret',
+    secret: 'secret',//peut être défini dans le .env
     resave: false,
     saveUninitialized: true
 }));
 app.use(function (req, res, next) {//récupère la cession utilisateur si connecté sur toutes les pages
     res.locals.enterprise = req.session
+    // req.session.enterpriseId = "id de l'ntreprise"; pour rester connecter en tout temps malgrés le authguard
     next()
 })
 
@@ -36,7 +37,7 @@ app.listen(process.env.PORT, (err) => {
     }
 });
 
-try {
+try {//Mongoose n'accepte pas les callback
     mongoose.connect(process.env.DB_URI)
     console.log("Connecté à la base de données");
 } catch (error) {
